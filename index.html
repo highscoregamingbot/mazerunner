@@ -7,17 +7,32 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      html, body {
-        width: 100vw; height: 100vh; margin: 0; padding: 0; overflow: hidden;
-      }
-      #unity-container, #unity-canvas {
+      html, body, #unity-container, #unity-canvas {
         width: 100vw !important;
         height: 100vh !important;
         margin: 0;
         padding: 0;
-        touch-action: none;
-        display: block;
+        overflow: hidden;
         background: #222;
+      }
+      #unity-canvas { touch-action: none; display: block; }
+      #goFullScreenBtn {
+        position: fixed;
+        z-index: 9999;
+        right: 20px;
+        bottom: 20px;
+        background: #222;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 14px 28px;
+        font-size: 1.1em;
+        cursor: pointer;
+        opacity: 0.9;
+      }
+      #goFullScreenBtn:hover {
+        opacity: 1;
+        background: #444;
       }
     </style>
   </head>
@@ -37,8 +52,11 @@
         <div id="unity-build-title">Maze</div>
       </div>
     </div>
+    <!-- Fullscreen knop -->
+    <button id="goFullScreenBtn">Volledig scherm</button>
     <script>
       var canvas = document.querySelector("#unity-canvas");
+      let unityInstance = null;
 
       function unityShowBanner(msg, type) {
         var warningBanner = document.querySelector("#unity-warning");
@@ -80,11 +98,10 @@
       script.onload = () => {
         createUnityInstance(canvas, config, (progress) => {
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
-        }).then((unityInstance) => {
+        }).then((inst) => {
+          unityInstance = inst; // Globaal toegankelijk voor de knop
           document.querySelector("#unity-loading-bar").style.display = "none";
-          // Dit probeert direct fullscreen te forceren
-          unityInstance.SetFullscreen(1);
-          // Fullscreen knop blijft werken
+          // De gewone Unity knop werkt nog gewoon
           document.querySelector("#unity-fullscreen-button").onclick = () => {
             unityInstance.SetFullscreen(1);
           };
@@ -93,8 +110,13 @@
         });
       };
       document.body.appendChild(script);
-    </script>
-    <script>
+
+      // Volledig scherm knop laten werken:
+      document.getElementById('goFullScreenBtn').onclick = function() {
+        if (unityInstance) unityInstance.SetFullscreen(1);
+      };
+
+      // Optioneel: canvas focus fix
       window.addEventListener('load', function() {
         var canvas = document.getElementById('unity-canvas');
         if(canvas) canvas.focus();
