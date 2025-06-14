@@ -13,7 +13,6 @@
         min-height: 100vh;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
         align-items: center;
       }
       #unity-container {
@@ -21,6 +20,9 @@
         margin: 40px auto 0 auto;
         background: #000;
         border-radius: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
       #unity-canvas {
         width: 320px;
@@ -29,12 +31,9 @@
         border-radius: 16px;
         display: block;
       }
-      /* Knop onderaan en compact */
+      /* Knop gewoon onder het canvas, niet fixed */
       #start-game-btn {
-        position: fixed;
-        left: 50%;
-        bottom: 36px;
-        transform: translateX(-50%);
+        margin: 30px auto 0 auto;
         width: 80vw;
         max-width: 320px;
         padding: 14px 0;
@@ -48,8 +47,8 @@
         cursor: pointer;
         letter-spacing: 0.05em;
         transition: background 0.2s, opacity 0.3s;
-        z-index: 10;
         opacity: 0.94;
+        display: block;
       }
       #start-game-btn:active {
         background: #222;
@@ -87,7 +86,7 @@
         <div id="unity-build-title">Maze</div>
       </div>
     </div>
-    <!-- Play-knop onderaan -->
+    <!-- Play-knop netjes ONDER het canvas -->
     <button id="start-game-btn">Play</button>
     <script>
       var canvas = document.querySelector("#unity-canvas");
