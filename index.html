@@ -21,43 +21,6 @@
       -webkit-touch-callout: none;
       -webkit-tap-highlight-color: transparent;
     }
-    #tap-to-start-overlay {
-      position: fixed;
-      z-index: 2147483647;
-      left: 0; top: 0; right: 0; bottom: 0;
-      background: rgba(34,34,34,0.93);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      font-size: 2em;
-      font-family: 'Arial', sans-serif;
-      letter-spacing: 1px;
-      transition: opacity .2s;
-      cursor: pointer;
-      user-select: none;
-      text-align: center;
-    }
-    #tap-to-start-overlay.fade-out {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s;
-    }
-    #tap-to-start-overlay .icon {
-      font-size: 2.5em;
-      margin-bottom: 0.7em;
-      animation: tapicon 1.2s infinite cubic-bezier(.4,1.4,.6,.9);
-    }
-    @keyframes tapicon {
-      0% { transform: translateY(0);}
-      50% { transform: translateY(14px);}
-      100% { transform: translateY(0);}
-    }
-    @media (max-width: 600px) {
-      #tap-to-start-overlay { font-size: 1.1em; }
-      #tap-to-start-overlay .icon { font-size: 2em; }
-    }
   </style>
 </head>
 <body>
@@ -74,17 +37,6 @@
       <div id="unity-logo-title-footer"></div>
       <div id="unity-fullscreen-button"></div>
       <div id="unity-build-title">Maze</div>
-    </div>
-  </div>
-  <!-- Overlay for first tap/touch -->
-  <div id="tap-to-start-overlay">
-    <div class="icon">👆</div>
-    <div>
-      Tap to start<br>
-      <span style="font-size:0.55em;opacity:0.85;display:block;margin-top:0.8em;">
-        If controls don’t work:<br>
-        rotate your device, resize the window or switch tabs!
-      </span>
     </div>
   </div>
   <script>
@@ -143,40 +95,22 @@
     };
     document.body.appendChild(script);
 
-    // ---- TAP TO START OVERLAY LOGIC + RESIZE TRICK ----
-    const overlay = document.getElementById('tap-to-start-overlay');
-    function hideOverlayAndFocusCanvas() {
-      overlay.classList.add('fade-out');
-      setTimeout(() => {
-        overlay.style.display = 'none';
-      }, 350);
-      // Focus canvas
-      canvas.focus();
-      // --- RESIZE TRICK ---
-      let origW = canvas.style.width;
-      let origH = canvas.style.height;
-      canvas.style.width = '99vw';
-      canvas.style.height = '99vh';
-      // Force window resize event (trucje)
-      window.dispatchEvent(new Event('resize'));
-      setTimeout(() => {
-        canvas.style.width = '100vw';
-        canvas.style.height = '100vh';
-        window.dispatchEvent(new Event('resize'));
-        canvas.focus();
-      }, 60);
-    }
-    // Tap/click anywhere on overlay = start
-    overlay.addEventListener('click', hideOverlayAndFocusCanvas);
-    overlay.addEventListener('touchstart', function(e){
-      hideOverlayAndFocusCanvas();
-      e.preventDefault();
-    }, {passive:false});
-
-    // (Optioneel) Canvas focus fix bij load
+    // --- RESIZE TRICK on load ---
     window.addEventListener('load', function() {
-      var canvas = document.getElementById('unity-canvas');
-      if(canvas) canvas.focus();
+      if(canvas) {
+        canvas.focus();
+        let origW = canvas.style.width;
+        let origH = canvas.style.height;
+        canvas.style.width = '99vw';
+        canvas.style.height = '99vh';
+        window.dispatchEvent(new Event('resize'));
+        setTimeout(() => {
+          canvas.style.width = '100vw';
+          canvas.style.height = '100vh';
+          window.dispatchEvent(new Event('resize'));
+          canvas.focus();
+        }, 60);
+      }
     });
   </script>
 </body>
