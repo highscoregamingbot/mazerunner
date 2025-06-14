@@ -14,9 +14,10 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: flex-start;
       }
       #unity-container {
-        width: 320px;
+        width: 280px;
         margin: 40px auto 0 auto;
         background: #000;
         border-radius: 16px;
@@ -25,24 +26,23 @@
         align-items: center;
       }
       #unity-canvas {
-        width: 320px;
-        height: 200px;
+        width: 280px;
+        height: 160px;
         background: #000;
         border-radius: 16px;
         display: block;
       }
-      /* Knop gewoon onder het canvas, niet fixed */
       #start-game-btn {
-        margin: 30px auto 0 auto;
-        width: 80vw;
-        max-width: 320px;
-        padding: 14px 0;
-        font-size: 1.25em;
+        margin: 32px 0 0 0;
+        width: 72vw;
+        max-width: 220px;
+        padding: 12px 0;
+        font-size: 1.15em;
         font-weight: bold;
         border: none;
         background: #111;
         color: #fff;
-        border-radius: 18px;
+        border-radius: 15px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.14);
         cursor: pointer;
         letter-spacing: 0.05em;
@@ -71,27 +71,27 @@
     </style>
   </head>
   <body>
+    <!-- Unity-game bovenaan -->
     <div id="unity-container" class="unity-desktop">
-      <canvas id="unity-canvas" width=320 height=200 tabindex="-1"></canvas>
+      <canvas id="unity-canvas" width=280 height=160 tabindex="-1"></canvas>
       <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
           <div id="unity-progress-bar-full"></div>
         </div>
       </div>
-      <div id="unity-warning"> </div>
+      <div id="unity-warning"></div>
       <div id="unity-footer" style="display:none;">
         <div id="unity-logo-title-footer"></div>
         <div id="unity-fullscreen-button"></div>
         <div id="unity-build-title">Maze</div>
       </div>
     </div>
-    <!-- Play-knop netjes ONDER het canvas -->
+    <!-- En hier de Play-knop direct eronder -->
     <button id="start-game-btn">Play</button>
     <script>
       var canvas = document.querySelector("#unity-canvas");
 
-      // Unity standaard script
       function unityShowBanner(msg, type) {
         var warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
