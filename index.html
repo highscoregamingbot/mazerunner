@@ -7,7 +7,6 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-      /* FADE-OUT ANIMATION FOR RESIZE WARNING */
       #resize-warning {
         display: none;
         position: fixed;
@@ -19,10 +18,10 @@
         font-size: 1.2em;
         opacity: 1;
         transition: opacity 0.6s;
+        pointer-events: none;
       }
       #resize-warning.hide {
         opacity: 0;
-        pointer-events: none;
       }
     </style>
   </head>
@@ -90,7 +89,6 @@
         document.getElementsByTagName('head')[0].appendChild(meta);
         document.querySelector("#unity-container").className = "unity-mobile";
         canvas.className = "unity-mobile";
-        // config.devicePixelRatio = 1; // Uncomment for lower res
       } else {
         canvas.style.width = "960px";
         canvas.style.height = "600px";
@@ -115,40 +113,44 @@
 
       document.body.appendChild(script);
 
-      // RESIZE WARNING SCRIPT with FADE-OUT
-      function showResizeWarning(show) {
+      // RESIZE WARNING SCRIPT: one-time, then never again
+      (function(){
         var warningDiv = document.getElementById('resize-warning');
-        if (!warningDiv) return;
+        var FADE_DURATION = 600; // ms
+        var warningDismissed = false;
 
-        if (show) {
+        function showWarning() {
+          if (warningDismissed) return;
           warningDiv.classList.remove('hide');
           warningDiv.style.display = 'block';
-          // Reset opacity in case fading in
-          setTimeout(() => {
-            warningDiv.style.opacity = "1";
-          }, 10);
-        } else {
-          // Fade out
+          warningDiv.style.opacity = '1';
+        }
+        function hideWarningForever() {
+          warningDismissed = true;
           warningDiv.classList.add('hide');
-          // After fade duration, hide completely
-          setTimeout(() => {
+          setTimeout(function() {
             warningDiv.style.display = 'none';
-          }, 600);
+          }, FADE_DURATION);
+          // Unregister events so hij komt nooit meer terug!
+          window.removeEventListener('resize', checkResizeWarning);
+          window.removeEventListener('orientationchange', checkResizeWarning);
         }
-      }
-
-      function checkResizeWarning() {
-        var ratio = window.innerWidth / window.innerHeight;
-        var show = false;
-        if (ratio < 1.2) {
-          show = true;
+        function shouldShowWarning() {
+          return window.innerWidth / window.innerHeight < 1.2;
         }
-        showResizeWarning(show);
-      }
-      window.addEventListener('resize', checkResizeWarning, false);
-      window.addEventListener('orientationchange', checkResizeWarning, false);
-      window.addEventListener('DOMContentLoaded', checkResizeWarning, false);
-      checkResizeWarning();
+        function checkResizeWarning() {
+          if (warningDismissed) return;
+          if (shouldShowWarning()) {
+            showWarning();
+          } else {
+            hideWarningForever();
+          }
+        }
+        window.addEventListener('resize', checkResizeWarning, false);
+        window.addEventListener('orientationchange', checkResizeWarning, false);
+        window.addEventListener('DOMContentLoaded', checkResizeWarning, false);
+        checkResizeWarning();
+      })();
     </script>
   </body>
 </html>
