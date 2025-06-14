@@ -16,7 +16,6 @@
       background: #222;
     }
     #unity-canvas { touch-action: none; display: block; }
-    /* Optioneel: extra gesture/touch fixes */
     html, body, #unity-container, #unity-canvas {
       -webkit-user-select: none;
       -webkit-touch-callout: none;
@@ -26,7 +25,7 @@
       position: fixed;
       z-index: 2147483647;
       left: 0; top: 0; right: 0; bottom: 0;
-      background: rgba(34,34,34,0.92);
+      background: rgba(34,34,34,0.93);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -38,6 +37,7 @@
       transition: opacity .2s;
       cursor: pointer;
       user-select: none;
+      text-align: center;
     }
     #tap-to-start-overlay.fade-out {
       opacity: 0;
@@ -79,7 +79,13 @@
   <!-- Overlay for first tap/touch -->
   <div id="tap-to-start-overlay">
     <div class="icon">👆</div>
-    <div>Tik om te beginnen</div>
+    <div>
+      Tap to start<br>
+      <span style="font-size:0.55em;opacity:0.85;display:block;margin-top:0.8em;">
+        If controls don’t work:<br>
+        rotate your device, resize the window or switch tabs!
+      </span>
+    </div>
   </div>
   <script>
     var canvas = document.querySelector("#unity-canvas");
@@ -137,17 +143,28 @@
     };
     document.body.appendChild(script);
 
-    // ---- TAP TO START OVERLAY LOGIC ----
+    // ---- TAP TO START OVERLAY LOGIC + RESIZE TRICK ----
     const overlay = document.getElementById('tap-to-start-overlay');
     function hideOverlayAndFocusCanvas() {
       overlay.classList.add('fade-out');
       setTimeout(() => {
         overlay.style.display = 'none';
       }, 350);
-      // Focus canvas (triggert Unity touch input correct)
+      // Focus canvas
       canvas.focus();
-      // Extra: force touchstart triggers focus (voor veiligheid op iOS)
-      setTimeout(()=>{canvas.focus();}, 120);
+      // --- RESIZE TRICK ---
+      let origW = canvas.style.width;
+      let origH = canvas.style.height;
+      canvas.style.width = '99vw';
+      canvas.style.height = '99vh';
+      // Force window resize event (trucje)
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(() => {
+        canvas.style.width = '100vw';
+        canvas.style.height = '100vh';
+        window.dispatchEvent(new Event('resize'));
+        canvas.focus();
+      }, 60);
     }
     // Tap/click anywhere on overlay = start
     overlay.addEventListener('click', hideOverlayAndFocusCanvas);
