@@ -21,14 +21,15 @@
         z-index: 9999;
         right: 20px;
         bottom: 20px;
-        background: #222;
+        background: rgba(0, 0, 0, 0.85);
         color: #fff;
         border: none;
         border-radius: 10px;
-        padding: 14px 28px;
-        font-size: 1.1em;
+        padding: 14px 32px;
+        font-size: 1.15em;
         cursor: pointer;
-        opacity: 0.9;
+        opacity: 0.92;
+        box-shadow: 0 4px 16px #0005;
       }
       #goFullScreenBtn:hover {
         opacity: 1;
@@ -56,7 +57,7 @@
     <button id="goFullScreenBtn">Volledig scherm</button>
     <script>
       var canvas = document.querySelector("#unity-canvas");
-      let unityInstance = null;
+      let unityInstance = null; // <- Globaal maken!
 
       function unityShowBanner(msg, type) {
         var warningBanner = document.querySelector("#unity-warning");
@@ -99,9 +100,9 @@
         createUnityInstance(canvas, config, (progress) => {
           document.querySelector("#unity-progress-bar-full").style.width = 100 * progress + "%";
         }).then((inst) => {
-          unityInstance = inst; // Globaal toegankelijk voor de knop
+          unityInstance = inst; // <- Nu globaal!
           document.querySelector("#unity-loading-bar").style.display = "none";
-          // De gewone Unity knop werkt nog gewoon
+          // De gewone Unity knop werkt nog steeds
           document.querySelector("#unity-fullscreen-button").onclick = () => {
             unityInstance.SetFullscreen(1);
           };
